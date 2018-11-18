@@ -20,7 +20,6 @@ import javax.validation.constraints.NotBlank;
 @ConfigurationProperties(prefix = "app.authentication")
 public class SecurityProperties {
 
-    @NotBlank private String urlSuccessLogout;
     @NotBlank private Integer jwtExpirationTime;
     @NotBlank private String jwtIssuer;
     @NotBlank private String jwtSecret;
