@@ -1,0 +1,1 @@
+This repository includes a base application for other Java/Spring projects.
