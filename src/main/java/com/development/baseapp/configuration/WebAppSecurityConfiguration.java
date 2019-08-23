@@ -39,18 +39,19 @@ import java.util.Collections;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebAppSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final Filter jwFilter;
-    private final Filter loginFilter;
-    private final AuthenticationEntryPoint failureEntryPoint;
-    private final DataSource dataSource;
+    @Autowired
+    @Qualifier("jwtFilter")
+    private Filter jwFilter;
 
-    public WebAppSecurityConfiguration(@Qualifier("jwtFilter") final Filter jwtFilter,  @Qualifier("loginFilter") final Filter loginFilter,
-                                       final AuthenticationEntryPoint failureEntryPoint, final DataSource dataSource) {
-        this.jwFilter = jwtFilter;
-        this.loginFilter = loginFilter;
-        this.failureEntryPoint = failureEntryPoint;
-        this.dataSource = dataSource;
-    }
+    @Autowired
+    @Qualifier("loginFilter")
+    private Filter loginFilter;
+
+    @Autowired
+    private AuthenticationEntryPoint failureEntryPoint;
+
+    @Autowired
+    private DataSource dataSource;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
