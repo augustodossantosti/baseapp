@@ -1,12 +1,12 @@
-drop table users cascade constraints;
+drop table if exists users cascade constraints;
 
 create table users(
-    username varchar_ignorecase(50) not null primary key,
-    password varchar_ignorecase(50) not null,
+    username varchar_ignorecase(15) not null primary key,
+    password varchar_ignorecase(100) not null,
     enabled boolean not null
 );
 
-drop table authorities cascade constraints;
+drop table if exists authorities cascade constraints;
 
 create table authorities (
     username varchar_ignorecase(50) not null,
@@ -16,7 +16,7 @@ create table authorities (
 
 create unique index ix_auth_username on authorities (username,authority);
 
-drop table domain cascade constraints;
+drop table if exists domain cascade constraints;
 
 create table domain (
   id NUMBER(19,0) not null primary key,
