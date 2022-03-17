@@ -1,7 +1,10 @@
 package com.development.baseapp.configuration;
 
+import com.development.baseapp.security.jwt.JwtFilter;
+import com.development.baseapp.security.login.LoginFilter;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,7 +25,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.servlet.Filter;
 import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,12 +42,10 @@ import java.util.Collections;
 public class WebAppSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    @Qualifier("jwtFilter")
-    private Filter jwFilter;
+    private JwtFilter jwFilter;
 
     @Autowired
-    @Qualifier("loginFilter")
-    private Filter loginFilter;
+    private LoginFilter loginFilter;
 
     @Autowired
     private AuthenticationEntryPoint failureEntryPoint;
@@ -53,46 +53,80 @@ public class WebAppSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
+    @Value("${server.servlet.context-path:}")
+    private String contextPath;
+
+    @Value("${spring.mvc.servlet.path:}")
+    private String servletPath;
+
+    @Value("${springdoc.swagger-ui.path:}")
+    private String swaggerUiPath;
+
+    @Value("${springdoc.api-docs.path:}")
+    private String apiDocsPath;
+
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET,"/", "/index.html").permitAll()
-                .antMatchers(HttpMethod.POST,"/login").permitAll()
-                .antMatchers(HttpMethod.GET, "/h2-console/**").hasRole("ADMIN")
-                .anyRequest().fullyAuthenticated();
+        final String BASE_PATH = servletPath + "/";
+        final String LOGIN_URL = servletPath + "/login";
+        final String H2_CONSOLE_URL = servletPath + "/h2-console/**";
+
+        loginFilter.setFilterProcessesUrl(LOGIN_URL);
+        jwFilter.setUrlToIgnore(LOGIN_URL, HttpMethod.POST.name(), true);
 
         http
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-                .cors().configurationSource(corsConfigurationSource())
-            .and()
-                .csrf().disable()
-                .headers().frameOptions().disable()
-            .and()
-                .exceptionHandling().authenticationEntryPoint(failureEntryPoint);
-
-        http
-                .addFilterAt(jwFilter, AbstractPreAuthenticatedProcessingFilter.class)
-                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout().disable();
+            .csrf().disable()
+            .headers().frameOptions().disable()
+        .and()
+            .authorizeRequests()
+            .antMatchers(HttpMethod.GET, BASE_PATH).permitAll()
+            .antMatchers(HttpMethod.POST,LOGIN_URL).permitAll()
+            .antMatchers(HttpMethod.GET, H2_CONSOLE_URL).hasRole("ADMIN")
+            .anyRequest().fullyAuthenticated()
+        .and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+            .cors().configurationSource(corsConfigurationSource())
+        .and()
+            .exceptionHandling().authenticationEntryPoint(failureEntryPoint)
+        .and()
+            .addFilterAt(jwFilter, AbstractPreAuthenticatedProcessingFilter.class)
+            .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
+            .logout().disable();
     }
 
     @Override
     public void configure(final WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/resources/**");
+        final String[] SWAGGER_DOCS = {
+                servletPath + "/v2/api-docs",
+                servletPath + "/swagger-resources",
+                servletPath + "/swagger-resources/**",
+                servletPath + "/configuration/ui",
+                servletPath + "/configuration/security",
+                servletPath + "/webjars/**",
+                servletPath + "/v3/api-docs/**",
+                servletPath + swaggerUiPath,
+                servletPath + swaggerUiPath + "/**",
+                servletPath + apiDocsPath,
+                servletPath + apiDocsPath + "/**"
+        };
+        final String[] API_RESOURCES = {
+                servletPath + "/index.html",
+                servletPath + "/resources/**"
+        };
+        web.ignoring().antMatchers(ArrayUtils.addAll(SWAGGER_DOCS, API_RESOURCES));
     }
 
     @Override
     @Autowired
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth
-                .jdbcAuthentication()
-                    .dataSource(dataSource)
-                    .passwordEncoder(passwordEncoder())
-                    .rolePrefix("ROLE_")
-                    .usersByUsernameQuery("SELECT USERNAME, PASSWORD, ENABLED FROM USERS WHERE USERNAME = ?")
-                    .authoritiesByUsernameQuery("SELECT USERNAME, AUTHORITY FROM AUTHORITIES WHERE USERNAME = ?");
+            .jdbcAuthentication()
+                .dataSource(dataSource)
+                .passwordEncoder(passwordEncoder())
+                .rolePrefix("ROLE_")
+                .usersByUsernameQuery("SELECT USERNAME, PASSWORD, ENABLED FROM USERS WHERE USERNAME = ?")
+                .authoritiesByUsernameQuery("SELECT USERNAME, AUTHORITY FROM AUTHORITIES WHERE USERNAME = ?");
     }
 
     @Bean

@@ -7,6 +7,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +54,19 @@ public class JwtFilter extends AbstractPreAuthenticatedProcessingFilter {
     @Autowired
     public void setAuthenticationFailureHandler(@Qualifier("jwtAuthenticationFailureHandler") final AuthenticationFailureHandler authenticationFailureHandler) {
         super.setAuthenticationFailureHandler(authenticationFailureHandler);
+    }
+
+    /**
+     * Excludes a specif URL pathern from filter verification
+     *
+     * @param pattern
+     * @param httpMethod
+     * @param caseSensitive
+     */
+    public void setUrlToIgnore(final String pattern, final String httpMethod, final boolean caseSensitive) {
+        final RequestMatcher requestMatcher = new AntPathRequestMatcher(pattern, httpMethod, caseSensitive);
+        final RequestMatcher negatedRequestMatcher = new NegatedRequestMatcher(requestMatcher);
+        setRequiresAuthenticationRequestMatcher(negatedRequestMatcher);
     }
 
     private String extractJwt(final HttpServletRequest request) {
