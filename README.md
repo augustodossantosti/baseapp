@@ -1,4 +1,6 @@
-This repository includes a base application for other Java/Spring projects that has REST as their Architectural style, Oracle database and user authentication process is performed with a JWT (Json Web Token).
+This repository includes a base application for other Java/Spring projects that has REST as their Architectural style, Oracle database and user authentication process performed with a JWT (Json Web Token).
+
+This project also offers API documentation with swagger and exposes their entities with Spring Data Rest.
 
 Security:
 
@@ -20,3 +22,8 @@ Some operations are allowed only for authenticated users with USER role and othe
 Database:
 
 This projects already defined to work with oracle database for dev and prod environment and to work with H2 for tests.
+
+Exception Handling and Error Messages:
+
+All exceptions are processed by WebAppErrorHandler, domain erros are based on AbstractWebAppException and the class WebAppErrorResponse constains useful data about the error itself.
+By default all implementations of AbstractWebAppExceptions should have @ResponseStatus annotation.
