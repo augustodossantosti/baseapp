@@ -1,4 +1,4 @@
-package com.development.baseapp.domain;
+package com.development.baseapp.domain.entity;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;

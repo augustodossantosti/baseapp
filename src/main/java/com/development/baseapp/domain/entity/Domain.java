@@ -1,4 +1,4 @@
-package com.development.baseapp.domain;
+package com.development.baseapp.domain.entity;
 
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
