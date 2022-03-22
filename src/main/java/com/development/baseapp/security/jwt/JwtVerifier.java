@@ -1,8 +1,5 @@
 package com.development.baseapp.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-
 /**
  * The interface <code>{@link JwtVerifier}</code> defines methods to be
  * implemented by objects responsible for verifing a <i>JWT</i> during
@@ -17,5 +14,5 @@ public interface JwtVerifier {
      * Performs JWT validation.
      * @param jws the jtw.
      */
-    void verify(Jws<Claims> jws) throws JwtException;
+    void verify(Jwt jws) throws JwtException;
 }

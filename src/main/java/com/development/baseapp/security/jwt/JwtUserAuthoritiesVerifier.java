@@ -1,11 +1,8 @@
 package com.development.baseapp.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,8 +16,8 @@ import java.util.List;
 public class JwtUserAuthoritiesVerifier implements JwtVerifier {
 
     @Override
-    public void verify(Jws<Claims> jws) {
-        final List roles = jws.getBody().get("roles", List.class);
+    public void verify(Jwt jws) {
+        final List<String> roles = jws.getRoles();
         if (CollectionUtils.isEmpty(roles)) {
             throw new JwtException("Invalid Authorities.");
         }

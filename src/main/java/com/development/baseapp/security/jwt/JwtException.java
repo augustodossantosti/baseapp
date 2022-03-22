@@ -9,7 +9,6 @@ import org.springframework.security.core.AuthenticationException;
  * @author Augusto Santos
  * @version 1.0
  */
-
 public class JwtException extends AuthenticationException {
 
     public JwtException(final String msg, final Throwable t) {
