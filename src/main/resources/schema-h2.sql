@@ -20,6 +20,6 @@ drop table if exists domain cascade constraints;
 
 create table domain (
   id NUMBER(19,0) not null primary key,
-	create_date TIMESTAMP (6),
+	create_date TIMESTAMP (6) DEFAULT CURRENT_TIMESTAMP,
 	info varchar_ignorecase(255)
 );
