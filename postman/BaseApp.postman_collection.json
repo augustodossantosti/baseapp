@@ -1,0 +1,267 @@
+{
+	"info": {
+		"_postman_id": "6217d6d1-c79e-4485-b988-6c8d0a23cccf",
+		"name": "BaseApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"   pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var access_token = pm.response.headers.get(\"Authorization\");",
+							"postman.setEnvironmentVariable(\"access_token\", access_token);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{user-username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{user-password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8081{{context-path}}{{servlet-path}}/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8081{{context-path}}{{servlet-path}}",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"   pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var access_token = pm.response.headers.get(\"Authorization\");",
+							"postman.setEnvironmentVariable(\"access_token\", access_token);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{admin-username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{admin-password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8081{{context-path}}{{servlet-path}}/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8081{{context-path}}{{servlet-path}}",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Home",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"   pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8081{{context-path}}{{servlet-path}}/",
+					"host": [
+						"localhost"
+					],
+					"port": "8081{{context-path}}{{servlet-path}}",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Swagger UI",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"   pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8081{{context-path}}{{servlet-path}}/swagger-ui",
+					"host": [
+						"localhost"
+					],
+					"port": "8081{{context-path}}{{servlet-path}}",
+					"path": [
+						"swagger-ui"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List All Domain",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8081{{context-path}}{{servlet-path}}/api/domains",
+					"host": [
+						"localhost"
+					],
+					"port": "8081{{context-path}}{{servlet-path}}",
+					"path": [
+						"api",
+						"domains"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Insert New Domain",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"function randomNumber() {",
+							"    return Math.floor(Math.random() * 9999);",
+							"}",
+							"",
+							"pm.environment.set(\"random-number\", randomNumber());"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"   pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\" : {{random-number}},\n    \"info\" : \"INFO\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081{{context-path}}{{servlet-path}}/api/domains",
+					"host": [
+						"localhost"
+					],
+					"port": "8081{{context-path}}{{servlet-path}}",
+					"path": [
+						"api",
+						"domains"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
