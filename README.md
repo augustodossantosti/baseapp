@@ -25,13 +25,15 @@ Swagger will be available for any existing or new controller at localhost:8081/a
 
 Security:
 
-All Spring Security related configuration is present in the WebAppSecurityConfiguration class.
+All Spring Security related configuration is present in the <a href="https://github.com/augustodossantosti/baseapp/blob/master/src/main/java/com/development/baseapp/configuration/WebAppSecurityConfiguration.java">WebAppSecurityConfiguration</a> class.
 
 This app has two authentication filters, one of them dedicated to login proccess and other related to perform authentication via JWT on every request for protected resources. The user information is stored in a database and retrieved during login process.
 
 Login filter handles request to the URL /login (POST) that must present two parameters to this filter: a username and password and gives to the client app a valid JWT after a successful authentication on response header Authorization.
   
 <p align="center"><img src="https://user-images.githubusercontent.com/14075325/159722804-42c6c135-502e-4976-bd61-599de8ba87d7.png"></p>
+  
+A valid JWT is created by class <a href="https://github.com/augustodossantosti/baseapp/blob/master/src/main/java/com/development/baseapp/security/login/JwtWriterListener.java">JwtWriterListener</a>.
 
 JWT filter hadles request for any protected resouces, that must present a valid JWT in the Authotization header (Bearer Token).
   
@@ -45,6 +47,8 @@ Model:
 
 As the goal of this project is to be used as basis for other applications there is only one Entity that is exposed via Spring Data Rest.
 Some operations are allowed only for authenticated users with USER role and others for users with ADMIN role. This protection is provided by using @PreAuthorize annotation with hasRole value.
+  
+All domain objects exposed with Spring Data Rest are available at localhost:8081/app/web/api/<domain-name>
 
 Database:
 
