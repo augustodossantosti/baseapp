@@ -29,11 +29,17 @@ All Spring Security related configuration is present in the WebAppSecurityConfig
 
 This app has two authentication filters, one of them dedicated to login proccess and other related to perform authentication via JWT on every request for protected resources. The user information is stored in a database and retrieved during login process.
 
-Login filter handles request to the URL /login (POST) that must present two parameters to this filter: a username and password and gives to the client app a valid JWT after a successful authentication.
+Login filter handles request to the URL /login (POST) that must present two parameters to this filter: a username and password and gives to the client app a valid JWT after a successful authentication on response header Authorization.
+  
+<p align="center"><img src="https://user-images.githubusercontent.com/14075325/159722804-42c6c135-502e-4976-bd61-599de8ba87d7.png"></p>
 
-JWT filter hadles request for any protected resouces, that must present a valid JWT in the Authotization header.
+JWT filter hadles request for any protected resouces, that must present a valid JWT in the Authotization header (Bearer Token).
+  
+<p align="center"><img src="https://user-images.githubusercontent.com/14075325/159722858-bb09fd11-f237-419c-bdc9-7238d0f5a14d.png"></p>
 
 All resources defined as permitAll and anonymous in WebAppSecurityConfiguration are processed by Anonymous filter provided by Spring.
+  
+The postman collection and environment are availabe at <i>/postman</i> folder on source code.
 
 Model:
 
