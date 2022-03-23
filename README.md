@@ -2,6 +2,27 @@ This repository includes a base application for other Java/Spring projects that 
 
 This project also offers API documentation with swagger and exposes their entities with Spring Data Rest.
 
+Running Application:
+
+By default the application offers three profiles: dev, test and prod.
+Test profile uses embedded database H2 and others use Oracle.
+
+To run the app via terminal: mvn spring-boot:run -P<profile>
+
+If a profile is not specified the test profile is used.
+
+Based on application.properties app will use the following values: port = 8081, context = /app and servlet path = /web
+
+The complete path will be localhost:8081/app/web/
+  
+<p align="center"><img src="https://user-images.githubusercontent.com/14075325/159719731-76393c49-4cc4-4ed0-adfa-aed783a2f89e.png"></p>
+  
+Documentation:
+  
+Swagger will be available for any existing or new controller at localhost:8081/app/web/swagger-ui
+  
+<p align="center"><img src="https://user-images.githubusercontent.com/14075325/159719863-c5abedd1-f30e-4d3f-82f1-f4b620f9db62.png"></p>
+
 Security:
 
 All Spring Security related configuration is present in the WebAppSecurityConfiguration class.
