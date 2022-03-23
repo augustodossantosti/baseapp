@@ -7,7 +7,7 @@ Running Application:
 By default the application offers three profiles: dev, test and prod.
 Test profile uses embedded database H2 and others use Oracle.
 
-To run the app via terminal: mvn spring-boot:run -P<profile>
+To run the app via terminal: mvn spring-boot:run -P[profile]
 
 If a profile is not specified the test profile is used.
 
@@ -48,7 +48,7 @@ Model:
 As the goal of this project is to be used as basis for other applications there is only one Entity that is exposed via Spring Data Rest.
 Some operations are allowed only for authenticated users with USER role and others for users with ADMIN role. This protection is provided by using @PreAuthorize annotation with hasRole value.
   
-All domain objects exposed with Spring Data Rest are available at localhost:8081/app/web/api/<domain-name>
+All domain objects exposed with Spring Data Rest are available at localhost:8081/app/web/api/[domain-name]
 
 Database:
 
