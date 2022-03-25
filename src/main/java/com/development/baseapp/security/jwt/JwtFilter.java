@@ -13,7 +13,6 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
 
 /**
  * The class <code>{@link JwtFilter}</code> acts as a <i>Spring Security's</i> filter
@@ -28,15 +27,13 @@ import java.util.Objects;
 @Component
 public class JwtFilter extends AbstractPreAuthenticatedProcessingFilter {
 
-    private static final String HEADER_PREFIX = "Bearer ";
-
     public JwtFilter(@Qualifier("jwtAuthenticationManager") final AuthenticationManager jwAuthenticationManager) {
         setAuthenticationManager(jwAuthenticationManager);
     }
 
     @Override
     protected Object getPreAuthenticatedPrincipal(final HttpServletRequest httpServletRequest) {
-        return extractJwt(httpServletRequest);
+        return httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
     }
 
     @Override
@@ -67,10 +64,5 @@ public class JwtFilter extends AbstractPreAuthenticatedProcessingFilter {
         final RequestMatcher requestMatcher = new AntPathRequestMatcher(pattern, httpMethod, caseSensitive);
         final RequestMatcher negatedRequestMatcher = new NegatedRequestMatcher(requestMatcher);
         setRequiresAuthenticationRequestMatcher(negatedRequestMatcher);
-    }
-
-    private String extractJwt(final HttpServletRequest request) {
-        final String jwt = request.getHeader(HttpHeaders.AUTHORIZATION);
-        return Objects.isNull(jwt) ? null : jwt.substring(HEADER_PREFIX.length());
     }
 }

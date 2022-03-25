@@ -1,15 +1,15 @@
 package com.development.baseapp.restapi.controller;
 
+import com.development.baseapp.security.jwt.Jwt;
+import com.development.baseapp.security.jwt.JwtExtractor;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The class <code>{@link AuthenticationInfoController}</code> is responsible for
@@ -20,19 +20,21 @@ import java.util.Map;
  * @version 1.0
  */
 @RestController
+@AllArgsConstructor
 @RequestMapping("/user")
 public class AuthenticationInfoController {
 
+    private final JwtExtractor jwtExtractor;
+
     @GetMapping
-    public Authentication authenticatedUser(@AuthenticationPrincipal final Authentication authentication) {
+    public Authentication authenticatedUser(final Authentication authentication) {
         return authentication;
     }
 
     @GetMapping(path = "/jwt")
-    public Map<String, String> jwtInfo(final HttpServletRequest request) {
-        // TODO Implementar retorno de info de jwt
-        final String jwt = request.getHeader(HttpHeaders.AUTHORIZATION);
-        return new HashMap<>();
+    public Jwt jwtInfo(final HttpServletRequest request) {
+        final String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        return jwtExtractor.extractJwt(bearerToken);
     }
 
 }
