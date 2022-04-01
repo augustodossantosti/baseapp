@@ -1,11 +1,11 @@
 package com.development.baseapp.domain.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 /**
@@ -15,26 +15,22 @@ import java.time.LocalDateTime;
  * @version 1.0
  */
 @Data
-@Entity
+@AllArgsConstructor
+@Document(collection = "domain")
 public class Domain {
 
     @Id
-    @Column(name = "ID")
-    private Long id;
-
-    @Column(name = "INFO")
+    private String id;
     private String info;
-
-    @DateTimeFormat
-    @Column(name = "CREATE_DATE")
+    @DateTimeFormat(pattern="dd-MM-yyyy HH:mm")
     private LocalDateTime createDate;
 
     public Domain() {
+        info = "";
         createDate = LocalDateTime.now();
     }
 
-    public Domain(final Long id, final String info) {
-        this.id = id;
+    public Domain(final String info) {
         this.info = info;
         createDate = LocalDateTime.now();
     }

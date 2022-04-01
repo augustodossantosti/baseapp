@@ -1,6 +1,6 @@
 package com.development.baseapp.domain.entity;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 @Repository
 @RepositoryRestResource(collectionResourceRel = "domains", path = "domains")
-public interface DomainRepository extends CrudRepository<Domain, Long> {
+public interface DomainRepository extends MongoRepository<Domain, Long> {
 
     @Override
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")

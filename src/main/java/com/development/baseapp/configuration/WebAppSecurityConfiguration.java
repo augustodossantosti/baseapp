@@ -1,5 +1,6 @@
 package com.development.baseapp.configuration;
 
+import com.development.baseapp.domain.user.MongoUserDetailsService;
 import com.development.baseapp.security.jwt.JwtFilter;
 import com.development.baseapp.security.login.LoginFilter;
 import org.apache.commons.lang3.ArrayUtils;
@@ -25,7 +26,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -48,10 +48,10 @@ public class WebAppSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private LoginFilter loginFilter;
 
     @Autowired
-    private AuthenticationEntryPoint failureEntryPoint;
+    private MongoUserDetailsService userDetailsService;
 
     @Autowired
-    private DataSource dataSource;
+    private AuthenticationEntryPoint failureEntryPoint;
 
     @Value("${server.servlet.context-path:}")
     private String contextPath;
@@ -118,15 +118,8 @@ public class WebAppSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    @Autowired
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth
-            .jdbcAuthentication()
-                .dataSource(dataSource)
-                .passwordEncoder(passwordEncoder())
-                .rolePrefix("ROLE_")
-                .usersByUsernameQuery("SELECT USERNAME, PASSWORD, ENABLED FROM USERS WHERE USERNAME = ?")
-                .authoritiesByUsernameQuery("SELECT USERNAME, AUTHORITY FROM AUTHORITIES WHERE USERNAME = ?");
+        auth.userDetailsService(userDetailsService);
     }
 
     @Bean
