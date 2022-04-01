@@ -5,6 +5,7 @@ import com.development.baseapp.domain.exception.InvalidDomainErrorException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -34,21 +35,33 @@ public class WebAppErrorHandler {
      * @param exception The related exception.
      * @return Information about error.
      */
+    @ExceptionHandler(AbstractWebAppException.class)
+    public ResponseEntity<WebAppErrorResponse> handleException(final HttpServletRequest request, final AbstractWebAppException exception) {
+        final String uri = request.getRequestURI();
+        final Optional<ResponseStatus> annotation = getAnnotation(exception, ResponseStatus.class);
+        final ResponseStatus responseStatus = annotation.orElseThrow(InvalidDomainErrorException::new);
+        final String message = responseStatus.reason();
+        final WebAppErrorResponse errorResponse = new WebAppErrorResponse(message, uri);
+        log.error("Failed a domain operation");
+        log.error("Cause of error: " + message);
+        log.error("URI: " + uri);
+        return ResponseEntity.status(responseStatus.value()).body(errorResponse);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<WebAppErrorResponse> handleException(final HttpServletRequest request, final AccessDeniedException exception) {
+        final String uri = request.getRequestURI();
+        final String message = exception.getMessage() != null ? exception.getMessage() : exception.toString();
+        final WebAppErrorResponse errorResponse = new WebAppErrorResponse(message, uri);
+        log.error("Internal application error.");
+        log.error("Cause of error: " + message);
+        log.error("URI: " + uri);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<WebAppErrorResponse> handleException(final HttpServletRequest request, final Exception exception) {
         final String uri = request.getRequestURI();
-
-        if (exception instanceof AbstractWebAppException) {
-            final Optional<ResponseStatus> annotation = getAnnotation(exception, ResponseStatus.class);
-            final ResponseStatus responseStatus = annotation.orElseThrow(InvalidDomainErrorException::new);
-            final String message = responseStatus.reason();
-            final WebAppErrorResponse errorResponse = new WebAppErrorResponse(message, uri);
-            log.error("Failed a domain operation");
-            log.error("Cause of error: " + message);
-            log.error("URI: " + uri);
-            return ResponseEntity.status(responseStatus.value()).body(errorResponse);
-        }
-
         final String message = exception.getMessage() != null ? exception.getMessage() : exception.toString();
         final WebAppErrorResponse errorResponse = new WebAppErrorResponse(message, uri);
         log.error("Internal application error.");
