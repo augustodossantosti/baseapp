@@ -51,9 +51,9 @@ public class WebAppErrorHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<WebAppErrorResponse> handleException(final HttpServletRequest request, final AccessDeniedException exception) {
         final String uri = request.getRequestURI();
-        final String message = exception.getMessage() != null ? exception.getMessage() : exception.toString();
+        final String message = exception.getMessage();
         final WebAppErrorResponse errorResponse = new WebAppErrorResponse(message, uri);
-        log.error("Internal application error.");
+        log.error("Security Error.");
         log.error("Cause of error: " + message);
         log.error("URI: " + uri);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
