@@ -7,6 +7,8 @@ Running Application:
 By default the application offers three profiles: dev, test and prod.
 Test profile uses embedded database H2 and others use Oracle.
 
+There is also support for MongoDB. For that use the <i>mongodb</i> branch instead.
+
 To run the app via terminal: mvn spring-boot:run -P[profile]
 
 If a profile is not specified the test profile is used.
