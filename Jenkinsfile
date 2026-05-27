@@ -14,15 +14,29 @@ pipeline {
         }
         stage('Sonar Analysis') {
             steps {
-                sh 'mvn sonar:sonar \
-                      -Dsonar.projectKey=com.development.baseapp:baseapp \
-                      -Dsonar.host.url=http://134.209.38.106:9000 \
-                      -Dsonar.login=4b311e01bfd05d2c7b707bd69213ca9a2083fc67'
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    sh 'mvn sonar:sonar \
+                          -Dsonar.projectKey=com.development.baseapp:baseapp \
+                          -Dsonar.host.url=${SONAR_HOST_URL} \
+                          -Dsonar.login=${SONAR_TOKEN}'
+                }
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying....'
+                withCredentials([
+                    string(credentialsId: 'docker-registry-url', variable: 'REGISTRY_URL'),
+                    usernamePassword(credentialsId: 'docker-registry-credentials',
+                        usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_PASS')
+                ]) {
+                    sh '''
+                        docker build -t ${REGISTRY_URL}/baseapp:${BUILD_NUMBER} .
+                        echo ${REGISTRY_PASS} | docker login ${REGISTRY_URL} -u ${REGISTRY_USER} --password-stdin
+                        docker push ${REGISTRY_URL}/baseapp:${BUILD_NUMBER}
+                        docker tag ${REGISTRY_URL}/baseapp:${BUILD_NUMBER} ${REGISTRY_URL}/baseapp:latest
+                        docker push ${REGISTRY_URL}/baseapp:latest
+                    '''
+                }
             }
         }
     }
