@@ -70,3 +70,4 @@ public final class Jwt {
     private Claims getPayload() {
         return jws.getPayload();
     }
+}

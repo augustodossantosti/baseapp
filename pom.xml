@@ -200,4 +200,13 @@
                                             <minimum>0.40</minimum>
                                         </limit>
                                     </limits>
-                            
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

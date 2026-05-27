@@ -87,4 +87,8 @@ class JwtExtractorTest {
                 .subject("test-user")
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiration))
-                .claim("rol
+                .claim("roles", List.of("ROLE_USER"))
+                .signWith(key)
+                .compact();
+    }
+}

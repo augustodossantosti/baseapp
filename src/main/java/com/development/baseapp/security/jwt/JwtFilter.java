@@ -64,3 +64,4 @@ public class JwtFilter extends AbstractPreAuthenticatedProcessingFilter {
         final RequestMatcher negatedRequestMatcher = new NegatedRequestMatcher(requestMatcher);
         setRequiresAuthenticationRequestMatcher(negatedRequestMatcher);
     }
+}

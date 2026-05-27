@@ -24,4 +24,8 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
                                         Authentication authentication) throws IOException, ServletException {
 
         // JWT authentication success is intentionally a no-op here.
-        
+        // The validated Authentication object is set in the SecurityContext by the
+        // AbstractPreAuthenticatedProcessingFilter before this handler is called.
+        // Add any post-authentication logic here if needed (e.g. audit logging).
+    }
+}
