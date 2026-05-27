@@ -1,18 +1,18 @@
 package com.development.baseapp.security.jwt;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * The class <code>{@link JwtFilter}</code> acts as a <i>Spring Security's</i> filter
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Augusto Santos
  * @version 1.0
  *
- * @see javax.servlet.Filter
+ * @see jakarta.servlet.Filter
  */
 @Component
 public class JwtFilter extends AbstractPreAuthenticatedProcessingFilter {
@@ -54,15 +54,13 @@ public class JwtFilter extends AbstractPreAuthenticatedProcessingFilter {
     }
 
     /**
-     * Excludes a specif URL pathern from filter verification
+     * Excludes a specific URL pattern from filter verification
      *
      * @param pattern
      * @param httpMethod
-     * @param caseSensitive
      */
-    public void setUrlToIgnore(final String pattern, final String httpMethod, final boolean caseSensitive) {
-        final RequestMatcher requestMatcher = new AntPathRequestMatcher(pattern, httpMethod, caseSensitive);
+    public void setUrlToIgnore(final String pattern, final HttpMethod httpMethod) {
+        final RequestMatcher requestMatcher = PathPatternRequestMatcher.pathPattern(httpMethod, pattern);
         final RequestMatcher negatedRequestMatcher = new NegatedRequestMatcher(requestMatcher);
         setRequiresAuthenticationRequestMatcher(negatedRequestMatcher);
     }
-}
