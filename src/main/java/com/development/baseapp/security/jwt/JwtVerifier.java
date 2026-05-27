@@ -2,8 +2,8 @@ package com.development.baseapp.security.jwt;
 
 /**
  * The interface <code>{@link JwtVerifier}</code> defines methods to be
- * implemented by objects responsible for verifing a <i>JWT</i> during
- * authentication proccess.
+ * implemented by objects responsible for verifying a <i>JWT</i> during
+ * authentication process.
  *
  * @author Augusto Santos
  * @version 1.0
