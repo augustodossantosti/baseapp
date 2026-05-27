@@ -36,27 +36,27 @@ public final class Jwt {
     }
 
     public Object getBodyValue(final String key) {
-        return getBody().get(key);
+        return getPayload().get(key);
     }
 
     public String getIssuer() {
-        return getBody().getIssuer();
+        return getPayload().getIssuer();
     }
 
     public String getId() {
-        return getBody().getId();
+        return getPayload().getId();
     }
 
     public String getSubject() {
-        return getBody().getSubject();
+        return getPayload().getSubject();
     }
 
     public Date getIssuedAt() {
-        return getBody().getIssuedAt();
+        return getPayload().getIssuedAt();
     }
 
     public List<String> getRoles() {
-       return getBody().get("roles", List.class);
+        return getPayload().get("roles", List.class);
     }
 
     public String getSignature() {
@@ -67,7 +67,6 @@ public final class Jwt {
         return jws.getHeader();
     }
 
-    private Claims getBody() {
-        return jws.getBody();
+    private Claims getPayload() {
+        return jws.getPayload();
     }
-}

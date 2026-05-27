@@ -5,14 +5,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Objects;
 
 /**
@@ -38,13 +36,17 @@ public class JwtExtractor {
     public Jwt extractJwt(final String bearerToken) {
         verifyNull(bearerToken);
         final String jwt = removePrefix(bearerToken);
+        final SecretKey signingKey = Keys.hmacShaKeyFor(securityProperties.getJwtSecret().getBytes());
         Jws<Claims> jws;
         try {
-            jws = Jwts.parser().setSigningKey(Keys.hmacShaKeyFor(securityProperties.getJwtSecret().getBytes())).parseClaimsJws(jwt);
-        } catch (final UnsupportedJwtException | MalformedJwtException | IllegalArgumentException | SecurityException ex) {
-            throw new JwtException("Invalid JWT token: " + ex.getMessage());
+            jws = Jwts.parser()
+                    .verifyWith(signingKey)
+                    .build()
+                    .parseSignedClaims(jwt);
         } catch (final ExpiredJwtException expiredEx) {
-            throw new JwtException("JWT expired: " +  expiredEx.getMessage());
+            throw new JwtException("JWT expired: " + expiredEx.getMessage());
+        } catch (final io.jsonwebtoken.JwtException | IllegalArgumentException ex) {
+            throw new JwtException("Invalid JWT token: " + ex.getMessage());
         }
         return new Jwt(jws);
     }

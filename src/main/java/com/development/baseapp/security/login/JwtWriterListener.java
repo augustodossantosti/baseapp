@@ -9,11 +9,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
+import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.sql.Date;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -35,15 +36,18 @@ public class JwtWriterListener implements AuthenticationListener {
         final HttpServletResponse response = authenticationEvent.getResponse();
         final Authentication authentication = authenticationEvent.getAuthentication();
         final Instant now = Instant.now();
+        final SecretKey signingKey = Keys.hmacShaKeyFor(securityProperties.getJwtSecret().getBytes());
         final String jwt = Jwts.builder()
-                .setIssuer(securityProperties.getJwtIssuer())
-                .setId(UUID.randomUUID().toString())
-                .setSubject(authentication.getName())
-                .setIssuedAt(Date.from(now))
-                .setNotBefore(Date.from(now))
-                .setExpiration(Date.from(now.plus(securityProperties.getJwtExpirationTime(), ChronoUnit.MINUTES)))
-                .claim("roles", authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                .signWith(Keys.hmacShaKeyFor(securityProperties.getJwtSecret().getBytes()))
+                .issuer(securityProperties.getJwtIssuer())
+                .id(UUID.randomUUID().toString())
+                .subject(authentication.getName())
+                .issuedAt(Date.from(now))
+                .notBefore(Date.from(now))
+                .expiration(Date.from(now.plus(securityProperties.getJwtExpirationTime(), ChronoUnit.MINUTES)))
+                .claim("roles", authentication.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList()))
+                .signWith(signingKey)
                 .compact();
         response.setHeader(HttpHeaders.AUTHORIZATION, jwt);
     }
