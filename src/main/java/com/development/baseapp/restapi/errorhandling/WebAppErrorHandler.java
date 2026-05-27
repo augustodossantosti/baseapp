@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
@@ -43,8 +43,8 @@ public class WebAppErrorHandler {
         final String message = responseStatus.reason();
         final WebAppErrorResponse errorResponse = new WebAppErrorResponse(message, uri);
         log.error("Failed a domain operation");
-        log.error("Cause of error: " + message);
-        log.error("URI: " + uri);
+        log.error("Cause of error: {}", message);
+        log.error("URI: {}", uri);
         return ResponseEntity.status(responseStatus.value()).body(errorResponse);
     }
 
@@ -54,8 +54,8 @@ public class WebAppErrorHandler {
         final String message = exception.getMessage();
         final WebAppErrorResponse errorResponse = new WebAppErrorResponse(message, uri);
         log.error("Security Error.");
-        log.error("Cause of error: " + message);
-        log.error("URI: " + uri);
+        log.error("Cause of error: {}", message);
+        log.error("URI: {}", uri);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
@@ -65,8 +65,8 @@ public class WebAppErrorHandler {
         final String message = exception.getMessage() != null ? exception.getMessage() : exception.toString();
         final WebAppErrorResponse errorResponse = new WebAppErrorResponse(message, uri);
         log.error("Internal application error.");
-        log.error("Cause of error: " + message);
-        log.error("URI: " + uri);
+        log.error("Cause of error: {}", message);
+        log.error("URI: {}", uri);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 

@@ -5,7 +5,8 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * The class <code>{@link SecurityProperties}</code> encapsulates information
@@ -20,7 +21,7 @@ import javax.validation.constraints.NotBlank;
 @ConfigurationProperties(prefix = "app.authentication")
 public class SecurityProperties {
 
-    @NotBlank private Integer jwtExpirationTime;
+    @NotNull private Integer jwtExpirationTime;
     @NotBlank private String jwtIssuer;
     @NotBlank private String jwtSecret;
 }
